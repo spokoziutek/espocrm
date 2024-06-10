@@ -1,25 +1,58 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  web:
-    build: .
-    ports:
-      - "80:80"
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      - db
 
-  db:
-    image: mysql:5.7
-    restart: always
+  espocrm:
+    image: espocrm/espocrm
+    container_name: espocrm
     environment:
-      MYSQL_DATABASE: espocrm
-      MYSQL_USER: espocrm_user
-      MYSQL_PASSWORD: espocrm_pass
-      MYSQL_ROOT_PASSWORD: root_pass
+      ESPOCRM_DATABASE_PLATFORM: Mysql
+      ESPOCRM_DATABASE_HOST: espocrm-server.mysql.database.azure.com
+      ESPOCRM_DATABASE_USER: espocrm@espocrm-server
+      ESPOCRM_DATABASE_PASSWORD: qweasdzxc1!
+      ESPOCRM_DATABASE_NAME: espocrm
+      ESPOCRM_ADMIN_USERNAME: admin
+      ESPOCRM_ADMIN_PASSWORD: password
+      ESPOCRM_SITE_URL: "http://localhost:8080"
     volumes:
-      - db_data:/var/lib/mysql
+      - espocrm:/var/www/html
+    restart: always
+    ports:
+      - 8080:80
+
+  espocrm-daemon:
+    image: espocrm/espocrm
+    container_name: espocrm-daemon
+    environment:
+      ESPOCRM_DATABASE_PLATFORM: Mysql
+      ESPOCRM_DATABASE_HOST: espocrm-server.mysql.database.azure.com
+      ESPOCRM_DATABASE_USER: espocrm@espocrm-server
+      ESPOCRM_DATABASE_PASSWORD: qweasdzxc1!
+      ESPOCRM_DATABASE_NAME: espocrm
+    volumes:
+      - espocrm:/var/www/html
+    restart: always
+    entrypoint: docker-daemon.sh
+
+  espocrm-websocket:
+    image: espocrm/espocrm
+    container_name: espocrm-websocket
+    environment:
+      ESPOCRM_DATABASE_PLATFORM: Mysql
+      ESPOCRM_DATABASE_HOST: espocrm-server.mysql.database.azure.com
+      ESPOCRM_DATABASE_USER: espocrm@espocrm-server
+      ESPOCRM_DATABASE_PASSWORD: qweasdzxc1!
+      ESPOCRM_DATABASE_NAME: espocrm
+      ESPOCRM_CONFIG_USE_WEB_SOCKET: "true"
+      ESPOCRM_CONFIG_WEB_SOCKET_URL: "ws://localhost:8081"
+      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN: "tcp://*:7777"
+      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: "tcp://espocrm-websocket:7777"
+    volumes:
+      - espocrm:/var/www/html
+    restart: always
+    entrypoint: docker-websocket.sh
+    ports:
+      - 8081:8080
 
 volumes:
-  db_data:
+  espocrm:
