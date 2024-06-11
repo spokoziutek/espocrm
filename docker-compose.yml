@@ -6,10 +6,10 @@ services:
     image: mysql:8
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: espocrm
+      MYSQL_ROOT_PASSWORD: qweasdzxc1!
+      MYSQL_DATABASE: mysql
       MYSQL_USER: espocrm
-      MYSQL_PASSWORD: database_password
+      MYSQL_PASSWORD: qweasdzxc1!
     volumes:
       - mysql:/var/lib/mysql
     restart: always
@@ -19,9 +19,9 @@ services:
     container_name: espocrm
     environment:
       ESPOCRM_DATABASE_PLATFORM: Mysql
-      ESPOCRM_DATABASE_HOST: mysql
+      ESPOCRM_DATABASE_HOST: espocrm-server.mysql.database.azure.com
       ESPOCRM_DATABASE_USER: espocrm
-      ESPOCRM_DATABASE_PASSWORD: database_password
+      ESPOCRM_DATABASE_PASSWORD: qweasdzxc1!
       ESPOCRM_ADMIN_USERNAME: admin
       ESPOCRM_ADMIN_PASSWORD: password
       ESPOCRM_SITE_URL: "http://localhost:8080"
